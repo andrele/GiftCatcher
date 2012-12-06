@@ -4,7 +4,22 @@
     <title>Space Demo</title>
     <link href="/stylesheets/screen.css" media="all" rel="stylesheet" type="text/css"/>
     <script language="javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script><script language="javascript" src="javascripts/jquery.hotkeys.js" type="text/javascript"></script><script language="javascript" src="javascripts/key_status.js" type="text/javascript"></script><script language="javascript" src="javascripts/util.js" type="text/javascript"></script><script language="javascript" src="javascripts/sprite.js" type="text/javascript"></script><script language="javascript" src="javascripts/sound.js" type="text/javascript"></script><script src="http://cdn.zigfu.com/zigjs/zig.min.js"></script>
-
+    <style>
+      div#radar
+      {
+        width: 400px;
+        height: 400px;
+        border: 1px solid black;
+        overflow: hidden;
+      }
+      div.user
+      {
+        position: relative;
+        width: 10px;
+        height: 10px;
+        background-color: blue;
+      }
+    </style>
   </head>
   <body>
     <h1>Space Demo</h1>
@@ -121,7 +136,8 @@
           update();
           draw();
         }, 1000/FPS);
-        
+
+
         function update() {
           if(keydown.space) {
             player.shoot();
@@ -229,7 +245,52 @@
         player.draw = function() {
           this.sprite.draw(canvas, this.x, this.y);
         };
+
+        var radardiv = document.getElementById('radar');
+
+        // The radar object will respond to events from the
+        // zig object and move the dots around accordingly.
+        // It is also responsible for creating and destroying
+        // the dots when users are added and removed.
+        // Functions onnewuser(), onlostser(), and ondataupdate()
+        // are called by the zig object when those things happen.
+
+        var radar = {
+          onuserfound: function (user) {
+            var userdiv = document.createElement('div');
+            userdiv.className = 'user';
+            user.radarelement = userdiv; // add radarelement as a property of the user
+            radardiv.appendChild(user.radarelement);
+          },
+          onuserlost: function (user) {
+            radardiv.removeChild(user.radarelement);
+          },
+          ondataupdate: function (zigdata) {
+            for (var userid in zigdata.users) {
+              var user = zigdata.users[userid];
+              var pos = user.position;
+              var el = user.radarelement;
+              var parentElenment = document.body;
+              var zrange = 4000;
+              var xrange = 4000;
+              var pixelwidth = parentElenment.offsetWidth;
+              var pixelheight = parentElenment.offsetHeight;
+              var heightscale = pixelheight / zrange;
+              var widthscale = pixelwidth / xrange;
+              player.x = (((pos[0] / xrange) + 0.5) * pixelwidth - (el.offsetWidth / 2)) -690;
+              el.style.left = player.x + "px";
+              console.log(player.x);
+            }
+          }
+        };
+
+        // Add the radar object as a listener to the zig object, so that
+        // the zig object will call the radar object's callback functions
+
+        zig.addListener(radar);
+
       //]]>
     </script>
+    <div id="radar"></div>
   </body>
 </html>
