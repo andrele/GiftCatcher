@@ -1,0 +1,8 @@
+pairs:
+  jt: James Trask; trask
+  al: Andre Le; andre.le
+email:
+  prefix: pair
+  domain: hp.com
+  no_solo_prefix: true
+
