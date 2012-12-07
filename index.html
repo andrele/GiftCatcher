@@ -19,20 +19,22 @@
         height: 10px;
         background-color: blue;
       }
+
+
     </style>
   </head>
   <body>
     <h1>Space Demo</h1>
     <script type='text/javascript'>
       //<![CDATA[
-        var CANVAS_WIDTH = 640;
-        var CANVAS_HEIGHT = 480;
+        var CANVAS_WIDTH = 1280;
+        var CANVAS_HEIGHT = 960;
         var FPS = 30;
         
         var player = {
           color: "#00A",
           x: 50,
-          y: 270,
+          y: 600,
           width: 20,
           height: 30,
           draw: function() {
@@ -92,15 +94,15 @@
           I.xVelocity = 0
           I.yVelocity = 2;
         
-          I.width = 32;
-          I.height = 32;
+          I.width = 82;
+          I.height = 82;
         
           I.inBounds = function() {
             return I.x >= 0 && I.x <= CANVAS_WIDTH &&
               I.y >= 0 && I.y <= CANVAS_HEIGHT;
           };
         
-          I.sprite = Sprite("enemy");
+          I.sprite = Sprite("present");
         
           I.draw = function() {
             this.sprite.draw(canvas, this.x, this.y);
@@ -118,7 +120,7 @@
           };
         
           I.explode = function() {
-            Sound.play("explosion");
+            Sound.play("whip");
         
             this.active = false;
             // Extra Credit: Add an explosion graphic
@@ -144,11 +146,11 @@
           }
         
           if(keydown.left) {
-            player.x -= 5;
+            player.x -= 15;
           }
         
           if(keydown.right) {
-            player.x += 5;
+            player.x += 15;
           }
 
 
@@ -240,7 +242,7 @@
           // Extra Credit: Add an explosion graphic and then end the game
         };
         
-        player.sprite = Sprite("player");
+        player.sprite = Sprite("stocking");
         
         player.draw = function() {
           this.sprite.draw(canvas, this.x, this.y);
@@ -277,9 +279,9 @@
               var pixelheight = parentElenment.offsetHeight;
               var heightscale = pixelheight / zrange;
               var widthscale = pixelwidth / xrange;
-              player.x = (((pos[0] / xrange) + 0.5) * pixelwidth - (el.offsetWidth / 2)) -690;
+              player.x = (((pos[0] / xrange) + 0.5) * pixelwidth - (el.offsetWidth / 2)) - 300;
               el.style.left = player.x + "px";
-              console.log(player.x);
+              console.log('Position X:' + pos[0]);
             }
           }
         };
