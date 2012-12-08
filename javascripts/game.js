@@ -1,7 +1,9 @@
 var CANVAS_WIDTH = 1280;
 var CANVAS_HEIGHT = 960;
 var FPS = 30;
-var ENEMY_SPAWN_RATE = 1;
+var ENEMY_SPAWN_RATE = 5;
+var ENEMY_AMPLITUDE_MULTIPLIER = 3;
+var ENEMY_VERTICAL_VELOCITY = 20;
 
 var player = {
   color: "#00A",
@@ -80,7 +82,7 @@ function Enemy(I) {
   I.x = CANVAS_WIDTH / 4 + Math.random() * CANVAS_WIDTH / 2;
   I.y = 0;
   I.xVelocity = 0
-  I.yVelocity = 2;
+  I.yVelocity = ENEMY_VERTICAL_VELOCITY;
 
   I.width = 82;
   I.height = 82;
@@ -100,7 +102,7 @@ function Enemy(I) {
     I.x += I.xVelocity;
     I.y += I.yVelocity;
 
-    I.xVelocity = 3 * Math.sin(I.age * Math.PI / 64);
+    I.xVelocity = ENEMY_AMPLITUDE_MULTIPLIER * Math.sin(I.age * Math.PI / 64);
 
     I.age++;
 
@@ -143,8 +145,6 @@ function update() {
   if(keydown.right) {
     player.x += 15;
   }
-
-
 
   player.x = player.x.clamp(0, CANVAS_WIDTH - player.width);
 
