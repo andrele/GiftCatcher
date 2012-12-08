@@ -1,6 +1,7 @@
 var CANVAS_WIDTH = 1280;
 var CANVAS_HEIGHT = 960;
 var FPS = 30;
+var ENEMY_SPAWN_RATE = 1;
 
 var player = {
   color: "#00A",
@@ -15,6 +16,20 @@ var player = {
 };
 
 var playerBullets = [];
+
+var background = {
+  color: "#00A",
+  x: 0,
+  y: 0,
+  width: 700,
+  height: 509,
+  draw: function() {
+    canvas.fillStyle = this.color;
+    canvas.fillRect(this.x, this.y, this.width, this.height);
+  }
+};
+
+// Projectile object
 
 function Bullet(I) {
   I.active = true;
@@ -50,8 +65,10 @@ function Bullet(I) {
   return I;
 }
 
+// Initialize enemies array
 enemies = [];
 
+// Enemy object
 function Enemy(I) {
   I = I || {};
 
@@ -100,7 +117,9 @@ function Enemy(I) {
   return I;
 };
 
-var canvasElement = $("<canvas width='" + CANVAS_WIDTH +
+// Draw the canvas
+
+var canvasElement = $("<canvas id='playground' width='" + CANVAS_WIDTH +
   "' height='" + CANVAS_HEIGHT + "'></canvas");
 var canvas = canvasElement.get(0).getContext("2d");
 canvasElement.appendTo('body');
@@ -110,6 +129,7 @@ setInterval(function() {
   draw();
 }, 1000/FPS);
 
+// Game loop updater. Checks for keypresses, handles collisions, and adds enemies to screen
 
 function update() {
   if(keydown.space) {
@@ -146,7 +166,8 @@ function update() {
 
   handleCollisions();
 
-  if(Math.random() < 0.1) {
+  // Enemy Spawning!
+  if(Math.random() < (ENEMY_SPAWN_RATE/FPS)) {
     enemies.push(Enemy());
   }
 }
@@ -173,6 +194,8 @@ player.midpoint = function() {
 function draw() {
   canvas.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
   player.draw();
+
+  background.draw();
 
   playerBullets.forEach(function(bullet) {
     bullet.draw();
@@ -217,4 +240,10 @@ player.sprite = Sprite("stocking");
 
 player.draw = function() {
   this.sprite.draw(canvas, this.x, this.y);
+};
+
+background.sprite = Sprite("background");
+
+background.draw = function() {
+  this.sprite.draw(canvas, 0, 0);
 };

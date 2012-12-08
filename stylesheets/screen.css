@@ -18,3 +18,8 @@ div.user
   height: 10px;
   background-color: blue;
 }
+
+body
+{
+  background-color: #c03636;
+}

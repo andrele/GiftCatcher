@@ -29,9 +29,12 @@ var radar = {
       var pixelheight = parentElenment.offsetHeight;
       var heightscale = pixelheight / zrange;
       var widthscale = pixelwidth / xrange;
-      player.x = (((pos[0] / xrange) + 0.5) * pixelwidth - (el.offsetWidth / 2)) - 300;
-      el.style.left = player.x + "px";
-//      console.log('Position X:' + pos[0]);
+      if (userid = 1)
+      {
+        player.x = (((pos[0] / xrange) + 0.5) * pixelwidth - (el.offsetWidth / 2)) - 300;
+        el.style.left = player.x + "px";
+        console.log('Position X:' + pos[0]);
+      }
     }
   }
 };
