@@ -1,7 +1,7 @@
 var CANVAS_WIDTH = window.screen.width-10;
 var CANVAS_HEIGHT = window.screen.height;
 var FPS = 30;
-var ENEMY_SPAWN_RATE = .5;
+var ENEMY_SPAWN_RATE = 0.5;
 var ENEMY_AMPLITUDE_MULTIPLIER = 3;
 var ENEMY_VERTICAL_VELOCITY = 10;
 
@@ -9,8 +9,8 @@ var player = {
   color: "#00A",
   x: 50,
   y: window.screen.height - 500,
-  width: 500,
-  height: 100,
+  width: 350,
+  height: 400,
   collision_x_offset: 0,
   collision_y_offset: 150,
   score: 0,
@@ -35,13 +35,14 @@ var background = {
 };
 
 var scoreBoard = {
-  fontSize: 24,
+  fontSize: 48,
   fontFace: "Arial",
   fillStyle: "#f00",
   text: "Hello World!",
+  x: 0,
+  y: 70,
   draw: function() {
     canvas.font = fontSize + 'px ' + fontFace;
-    var y = canvas.measureText(text).width;
     canvas.fillText(text, 10, y);
   }
 };
@@ -271,8 +272,7 @@ background.draw = function() {
 scoreBoard.draw = function() {
     var text = 'Score: ' + player.score;
     canvas.font= scoreBoard.fontSize + 'px ' + scoreBoard.fontFace;
-    var y = canvas.measureText(text).width;
-    canvas.fillText(text,10,y);
+    canvas.fillText(text,10,scoreBoard.y);
 }
 
 player.sprite = Sprite("player");
