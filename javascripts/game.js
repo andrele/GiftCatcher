@@ -1,5 +1,5 @@
 var CANVAS_WIDTH = window.screen.width-10;
-var CANVAS_HEIGHT = 960;
+var CANVAS_HEIGHT = window.screen.height;
 var FPS = 30;
 var ENEMY_SPAWN_RATE = .5;
 var ENEMY_AMPLITUDE_MULTIPLIER = 3;
@@ -8,7 +8,7 @@ var ENEMY_VERTICAL_VELOCITY = 10;
 var player = {
   color: "#00A",
   x: 50,
-  y: 500,
+  y: window.screen.height - 500,
   width: 500,
   height: 100,
   collision_x_offset: 0,
@@ -26,11 +26,23 @@ var background = {
   color: "#00A",
   x: 0,
   y: 0,
-  width: 1600,
-  height: 1200,
+  width: window.screen.width,
+  height: window.screen.height,
   draw: function() {
     canvas.fillStyle = this.color;
     canvas.fillRect(this.x, this.y, this.width, this.height);
+  }
+};
+
+var scoreBoard = {
+  fontSize: 24,
+  fontFace: "Arial",
+  fillStyle: "#f00",
+  text: "Hello World!",
+  draw: function() {
+    canvas.font = fontSize + 'px ' + fontFace;
+    var y = canvas.measureText(text).width;
+    canvas.fillText(text, 10, y);
   }
 };
 
@@ -114,6 +126,7 @@ function Enemy(I) {
 
   I.explode = function() {
     Sound.play("whip");
+
     this.active = false;
     // Extra Credit: Add an explosion graphic
   };
@@ -195,9 +208,12 @@ player.midpoint = function() {
 };
 
 function draw() {
-  canvas.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  //canvas.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  $("canvas").clearCanvas();
 
   background.draw();
+
+  scoreBoard.draw();
 
   player.draw();
 
@@ -249,7 +265,15 @@ background.sprite = Sprite("background");
 
 background.draw = function() {
   this.sprite.draw(canvas, 0, 0);
+
 };
+
+scoreBoard.draw = function() {
+    var text = 'Score: ' + player.score;
+    canvas.font= scoreBoard.fontSize + 'px ' + scoreBoard.fontFace;
+    var y = canvas.measureText(text).width;
+    canvas.fillText(text,10,y);
+}
 
 player.sprite = Sprite("player");
 
