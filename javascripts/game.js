@@ -271,7 +271,7 @@ background.draw = function() {
 };
 
 scoreBoard.draw = function() {
-    var text = 'Score: ' + player.score + ' Distance traveled: ' + Math.floor((player.distance/800)*100) + 'ft';
+    var text = 'Score: ' + player.score + ' Distance traveled: ' + Math.floor((player.distance/300)) + 'ft';
     canvas.font= scoreBoard.fontSize + 'px ' + scoreBoard.fontFace;
     canvas.fillText(text,10,scoreBoard.y);
 }
