@@ -14,6 +14,7 @@ var player = {
   collision_x_offset: 0,
   collision_y_offset: 150,
   score: 0,
+  distance: 0,
   draw: function() {
     canvas.fillStyle = this.color;
     canvas.fillRect(this.x, this.y, this.width, this.height);
@@ -270,7 +271,7 @@ background.draw = function() {
 };
 
 scoreBoard.draw = function() {
-    var text = 'Score: ' + player.score;
+    var text = 'Score: ' + player.score + ' Distance traveled: ' + Math.floor((player.distance/800)*100) + 'ft';
     canvas.font= scoreBoard.fontSize + 'px ' + scoreBoard.fontFace;
     canvas.fillText(text,10,scoreBoard.y);
 }

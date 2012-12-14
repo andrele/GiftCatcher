@@ -31,9 +31,14 @@ var radar = {
       var widthscale = pixelwidth / xrange;
       if (userid = 1)
       {
-        player.x = ((((pos[0] / xrange) + 0.5) * pixelwidth - (el.offsetWidth / 2)) - 200);
+        // player.x = ((((pos[0] / xrange) + 0.5) * pixelwidth - (el.offsetWidth / 2)) - 200);
+        var newPosition = ((pos[0]*(pixelwidth/2)/800) + 600);
+        player.distance += Math.floor(Math.abs((newPosition-player.x)));
+        player.x = newPosition;
         el.style.left = player.x + "px";
         console.log('Position X:' + player.x);
+        console.log('pos[0]: ' + pos[0]);
+        console.log('Distance: ' + player.distance);
       }
     }
   }
