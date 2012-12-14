@@ -19,7 +19,15 @@ div.user
   background-color: blue;
 }
 
+html{
+  background: url('../images/background.png') no-repeat center center;
+
+  min-height: 100%;
+
+  background-size: cover;
+}
+
 body
 {
-  background-color: #c03636;
+  min-height: 100%;
 }

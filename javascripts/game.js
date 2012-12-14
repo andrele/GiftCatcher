@@ -1,11 +1,20 @@
-var CANVAS_WIDTH = window.screen.width-10;
-var CANVAS_HEIGHT = window.screen.height;
-var FPS = 30;
-var ENEMY_SPAWN_RATE = 0.5;
-var ENEMY_AMPLITUDE_MULTIPLIER = 3;
-var ENEMY_VERTICAL_VELOCITY = 10;
+
+
+// Falling object types
 var ENEMY_TYPE_PRESENT = 1;
 var ENEMY_TYPE_SNOWBALL = 2;
+
+var game = {
+  canvas_width: window.screen.width,
+  canvas_height: window.screen.height,
+  fps: 30,
+  enemy_spawn_rate: 0.5,
+  enemy_amplitude_multiplier: 3,
+  enemy_vertical_velocity: 10,
+  interval: 0,
+  highscore: 0,
+  timelimit: 0
+};
 
 var player = {
   color: "#00A",
@@ -25,7 +34,7 @@ var player = {
 };
 
 var playerBullets = [];
-
+/*
 var background = {
   color: "#00A",
   x: 0,
@@ -37,16 +46,18 @@ var background = {
     canvas.fillRect(this.x, this.y, this.width, this.height);
   }
 };
-
+*/
 var scoreBoard = {
   fontSize: 48,
-  fontFace: "Arial",
-  fillStyle: "#f00",
+  fontFace: "Mountains of Christmas",
+  fontFamily: "cursive",
+  fontWeight: 700,
+  fillStyle: "#035903",
   text: "Hello World!",
   x: 0,
   y: 70,
   draw: function() {
-    canvas.font = fontSize + 'px ' + fontFace;
+    canvas.font ='normal ' + fontWeight + ' ' + fontSize + 'px ' + "'" + fontFace + "'";
     canvas.fillText(text, 10, y);
   }
 };
@@ -63,8 +74,8 @@ function Bullet(I) {
   I.color = "#000";
 
   I.inBounds = function() {
-    return I.x >= 0 && I.x <= CANVAS_WIDTH &&
-      I.y >= 0 && I.y <= CANVAS_HEIGHT;
+    return I.x >= 0 && I.x <= game.game.canvas_width &&
+      I.y >= 0 && I.y <= game.game.canvas_height;
   };
 
   I.draw = function() {
@@ -100,17 +111,17 @@ function Enemy(I) {
 
   I.color = "#A2B";
 
-  I.x = CANVAS_WIDTH / 4 + Math.random() * CANVAS_WIDTH / 2;
+  I.x = game.canvas_width / 4 + Math.random() * game.canvas_width / 2;
   I.y = 0;
   I.xVelocity = 0
-  I.yVelocity = ENEMY_VERTICAL_VELOCITY;
+  I.yVelocity = Math.random()*game.enemy_vertical_velocity +2;
 
   I.width = 82;
   I.height = 82;
 
   I.inBounds = function() {
-    return I.x >= 0 && I.x <= CANVAS_WIDTH &&
-      I.y >= 0 && I.y <= CANVAS_HEIGHT;
+    return I.x >= 0 && I.x <= game.canvas_width &&
+      I.y >= 0 && I.y <= game.canvas_height;
   };
 
   if (I.type === ENEMY_TYPE_PRESENT) 
@@ -128,7 +139,7 @@ function Enemy(I) {
     I.x += I.xVelocity;
     I.y += I.yVelocity;
 
-    I.xVelocity = ENEMY_AMPLITUDE_MULTIPLIER * Math.sin(I.age * Math.PI / 64);
+    I.xVelocity = game.enemy_amplitude_multiplier * Math.sin(I.age * Math.PI / 64);
 
     I.age++;
 
@@ -136,14 +147,18 @@ function Enemy(I) {
   };
 
   I.explode = function() {
-    if (this.type === ENEMY_TYPE_PRESENT)
-    {
+    if (this.type === ENEMY_TYPE_PRESENT) {
       Sound.play("whip");
       player.score++;
+      if (player.score > game.highscore) {game.highscore = player.score};
     }else{
       Sound.play("explosion");
       player.lives--;
-    }
+
+      if (player.lives <= 0){
+        stopGame();
+      };
+    };
 
     this.active = false;
     // Extra Credit: Add an explosion graphic
@@ -154,16 +169,32 @@ function Enemy(I) {
 
 // Draw the canvas
 
-var canvasElement = $("<canvas id='playground' width='" + CANVAS_WIDTH +
-  "' height='" + CANVAS_HEIGHT + "'></canvas>");
+var canvasElement = $("<canvas id='playground' width='" + game.canvas_width +
+  "' height='" + game.canvas_height + "'></canvas>");
 var canvas = canvasElement.get(0).getContext("2d");
 canvasElement.appendTo('body');
 
-// Game loop
-setInterval(function() {
-  update();
+function startGame(){
+  game.interval = setInterval(function() {
+    update();
+    draw();
+  }, 1000/game.fps);
+}
+
+function stopGame(){
+  clearInterval(game.interval);
+  var text = 'GAME OVER';
+  canvas.font= scoreBoard.fontSize + 'px ' + scoreBoard.fontFace;
+  canvas.fillText(text,game.canvas_width/2,game.canvas_height/2);
   draw();
-}, 1000/FPS);
+}
+
+function resetGame(){
+
+}
+
+// Game loop
+
 
 // Game loop updater. Checks for keypresses, handles collisions, and adds enemies to screen
 
@@ -180,7 +211,7 @@ function update() {
     player.x += 15;
   }
 
-  player.x = player.x.clamp(0, CANVAS_WIDTH - player.width);
+  player.x = player.x.clamp(0, game.canvas_width - player.width);
 
   playerBullets.forEach(function(bullet) {
     bullet.update();
@@ -201,7 +232,7 @@ function update() {
   handleCollisions();
 
   // Enemy Spawning!
-  if(Math.random() < (ENEMY_SPAWN_RATE/FPS)) {
+  if(Math.random() < (game.enemy_spawn_rate/game.fps)) {
     enemies.push(Enemy());
   }
 }
@@ -226,10 +257,10 @@ player.midpoint = function() {
 };
 
 function draw() {
-  //canvas.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  //canvas.clearRect(0, 0, game.canvas_width, game.canvas_height);
   $("canvas").clearCanvas();
 
-  background.draw();
+  //background.draw();
 
   scoreBoard.draw();
 
@@ -276,22 +307,25 @@ player.explode = function() {
   this.active = false;
   // Extra Credit: Add an explosion graphic and then end the game
 };
-
+/*
 background.sprite = Sprite("background");
 
 background.draw = function() {
   this.sprite.draw(canvas, 0, 0);
 
-};
+}; */
 
 scoreBoard.draw = function() {
-    var text = 'Score: ' + player.score;
-    canvas.font= scoreBoard.fontSize + 'px ' + scoreBoard.fontFace;
+    var text = 'High Score: ' + game.highscore;
+    canvas.fillStyle = scoreBoard.fillStyle;
+    canvas.font = 'normal ' + scoreBoard.fontWeight + ' ' + scoreBoard.fontSize + 'px ' + "'" + scoreBoard.fontFace + "'";
     canvas.fillText(text,10,scoreBoard.y);
-    text = 'Distance traveled: ' + Math.floor((player.distance/300)) + 'ft';
+    text = 'Score: ' + player.score;
     canvas.fillText(text,10,scoreBoard.y + 50);
-    text = 'Lives: ' + player.lives;
+    text = 'Distance traveled: ' + Math.floor((player.distance/300)) + 'ft';
     canvas.fillText(text,10,scoreBoard.y + 100);
+    text = 'Lives: ' + player.lives;
+    canvas.fillText(text,10,scoreBoard.y + 150);
 }
 
 player.sprite = Sprite("player");
@@ -300,4 +334,5 @@ player.draw = function() {
   this.sprite.draw(canvas, this.x, this.y);
 };
 
+startGame();
 

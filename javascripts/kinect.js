@@ -12,10 +12,10 @@ var radar = {
     var userdiv = document.createElement('div');
     userdiv.className = 'user';
     user.radarelement = userdiv; // add radarelement as a property of the user
-    radardiv.appendChild(user.radarelement);
+    //radardiv.appendChild(user.radarelement);
   },
   onuserlost: function (user) {
-    radardiv.removeChild(user.radarelement);
+    //radardiv.removeChild(user.radarelement);
   },
   ondataupdate: function (zigdata) {
     for (var userid in zigdata.users) {
@@ -29,8 +29,7 @@ var radar = {
       var pixelheight = parentElenment.offsetHeight;
       var heightscale = pixelheight / zrange;
       var widthscale = pixelwidth / xrange;
-      if (userid = 1)
-      {
+
         // player.x = ((((pos[0] / xrange) + 0.5) * pixelwidth - (el.offsetWidth / 2)) - 200);
         var newPosition = ((pos[0]*(pixelwidth/2)/800) + 600);
         player.distance += Math.floor(Math.abs((newPosition-player.x)));
@@ -39,7 +38,7 @@ var radar = {
         console.log('Position X:' + player.x);
         console.log('pos[0]: ' + pos[0]);
         console.log('Distance: ' + player.distance);
-      }
+
     }
   }
 };
