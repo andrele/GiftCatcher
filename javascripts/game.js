@@ -4,6 +4,8 @@ var FPS = 30;
 var ENEMY_SPAWN_RATE = 0.5;
 var ENEMY_AMPLITUDE_MULTIPLIER = 3;
 var ENEMY_VERTICAL_VELOCITY = 10;
+var ENEMY_TYPE_PRESENT = 1;
+var ENEMY_TYPE_SNOWBALL = 2;
 
 var player = {
   color: "#00A",
@@ -14,6 +16,7 @@ var player = {
   collision_x_offset: 0,
   collision_y_offset: 150,
   score: 0,
+  lives: 3,
   distance: 0,
   draw: function() {
     canvas.fillStyle = this.color;
@@ -93,6 +96,7 @@ function Enemy(I) {
 
   I.active = true;
   I.age = Math.floor(Math.random() * 128);
+  I.type = Math.floor(Math.random() * 2 + 1);
 
   I.color = "#A2B";
 
@@ -109,7 +113,12 @@ function Enemy(I) {
       I.y >= 0 && I.y <= CANVAS_HEIGHT;
   };
 
-  I.sprite = Sprite("present");
+  if (I.type === ENEMY_TYPE_PRESENT) 
+  {  
+    I.sprite = Sprite("present");
+  }else{ 
+    I.sprite = Sprite("snowball");
+  };
 
   I.draw = function() {
     this.sprite.draw(canvas, this.x, this.y);
@@ -127,7 +136,14 @@ function Enemy(I) {
   };
 
   I.explode = function() {
-    Sound.play("whip");
+    if (this.type === ENEMY_TYPE_PRESENT)
+    {
+      Sound.play("whip");
+      player.score++;
+    }else{
+      Sound.play("explosion");
+      player.lives--;
+    }
 
     this.active = false;
     // Extra Credit: Add an explosion graphic
@@ -258,8 +274,6 @@ function handleCollisions() {
 
 player.explode = function() {
   this.active = false;
-  this.score++;
-  console.log('Player score: ' + this.score);
   // Extra Credit: Add an explosion graphic and then end the game
 };
 
@@ -271,9 +285,13 @@ background.draw = function() {
 };
 
 scoreBoard.draw = function() {
-    var text = 'Score: ' + player.score + ' Distance traveled: ' + Math.floor((player.distance/300)) + 'ft';
+    var text = 'Score: ' + player.score;
     canvas.font= scoreBoard.fontSize + 'px ' + scoreBoard.fontFace;
     canvas.fillText(text,10,scoreBoard.y);
+    text = 'Distance traveled: ' + Math.floor((player.distance/300)) + 'ft';
+    canvas.fillText(text,10,scoreBoard.y + 50);
+    text = 'Lives: ' + player.lives;
+    canvas.fillText(text,10,scoreBoard.y + 100);
 }
 
 player.sprite = Sprite("player");
