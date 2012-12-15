@@ -13,7 +13,8 @@ var game = {
   enemy_vertical_velocity: 10,
   interval: 0,
   highscore: 0,
-  timelimit: 0
+  timelimit: 60,
+  time: 0
 };
 
 var player = {
@@ -96,7 +97,7 @@ function Bullet(I) {
   };
 
   return I;
-}
+};
 
 // Initialize enemies array
 enemies = [];
@@ -152,12 +153,8 @@ function Enemy(I) {
       player.score++;
       if (player.score > game.highscore) {game.highscore = player.score};
     }else{
-      Sound.play("explosion");
+      Sound.play("crow");
       player.lives--;
-
-      if (player.lives <= 0){
-        stopGame();
-      };
     };
 
     this.active = false;
@@ -174,27 +171,30 @@ var canvasElement = $("<canvas id='playground' width='" + game.canvas_width +
 var canvas = canvasElement.get(0).getContext("2d");
 canvasElement.appendTo('body');
 
+var overlayElement = $("<canvas id='overlay' width='" + game.canvas_width +
+  "' height='" + game.canvas_height + "'></canvas>");
+var overlay = canvasElement.get(0).getContext("2d");
+overlayElement.appendTo('body');
+
 function startGame(){
+  game.time = game.timelimit*game.fps;
   game.interval = setInterval(function() {
     update();
     draw();
   }, 1000/game.fps);
-}
+};
 
 function stopGame(){
   clearInterval(game.interval);
   var text = 'GAME OVER';
   canvas.font= scoreBoard.fontSize + 'px ' + scoreBoard.fontFace;
   canvas.fillText(text,game.canvas_width/2,game.canvas_height/2);
-  draw();
-}
+  Sound.play("gameover");
+};
 
 function resetGame(){
 
-}
-
-// Game loop
-
+};
 
 // Game loop updater. Checks for keypresses, handles collisions, and adds enemies to screen
 
@@ -209,6 +209,12 @@ function update() {
 
   if(keydown.right) {
     player.x += 15;
+  }
+
+  game.time--;
+
+  if (game.time <= 0){
+    stopGame();
   }
 
   player.x = player.x.clamp(0, game.canvas_width - player.width);
@@ -235,7 +241,7 @@ function update() {
   if(Math.random() < (game.enemy_spawn_rate/game.fps)) {
     enemies.push(Enemy());
   }
-}
+};
 
 player.shoot = function() {
   Sound.play("shoot");
@@ -273,14 +279,14 @@ function draw() {
   enemies.forEach(function(enemy) {
     enemy.draw();
   });
-}
+};
 
 function collides(a, b) {
   return a.x < b.x + b.width &&
     a.x + a.width - b.collision_x_offset > b.x &&
     a.y < b.y + b.height &&
     a.y + a.height - b.collision_y_offset > b.y;
-}
+};
 
 function handleCollisions() {
 
@@ -301,7 +307,7 @@ function handleCollisions() {
       player.explode();
     }
   });
-}
+};
 
 player.explode = function() {
   this.active = false;
@@ -316,23 +322,34 @@ background.draw = function() {
 }; */
 
 scoreBoard.draw = function() {
-    var text = 'High Score: ' + game.highscore;
-    canvas.fillStyle = scoreBoard.fillStyle;
-    canvas.font = 'normal ' + scoreBoard.fontWeight + ' ' + scoreBoard.fontSize + 'px ' + "'" + scoreBoard.fontFace + "'";
-    canvas.fillText(text,10,scoreBoard.y);
-    text = 'Score: ' + player.score;
-    canvas.fillText(text,10,scoreBoard.y + 50);
-    text = 'Distance traveled: ' + Math.floor((player.distance/300)) + 'ft';
-    canvas.fillText(text,10,scoreBoard.y + 100);
-    text = 'Lives: ' + player.lives;
-    canvas.fillText(text,10,scoreBoard.y + 150);
-}
+  
+    var text = 'HIGHSCORE: ' + game.highscore;
+    overlay.fillStyle = scoreBoard.fillStyle;
+    overlay.font = 'normal ' + scoreBoard.fontWeight + ' ' + scoreBoard.fontSize + 'px ' + "'" + scoreBoard.fontFace + "'";
+    overlay.fillText(text,10,scoreBoard.y);
+    text = 'SCORE: ' + player.score;
+    overlay.fillText(text,10,scoreBoard.y + 50);
+    text = 'DISTANCE: ' + Math.floor((player.distance/300)) + 'ft';
+    overlay.fillText(text,10,scoreBoard.y + 100);
+    text = 'TIME LEFT: ' + Math.floor(game.time/game.fps) + ' seconds';
+    overlay.fillText(text,10,scoreBoard.y + 150); 
+
+    $("#overlay").drawText({
+      fillStyle: "#EEEEEE",
+      x: 150, y:100,
+      font: "36pt Verdana, sans-serif",
+      text: ""
+    });
+};
 
 player.sprite = Sprite("player");
 
 player.draw = function() {
   this.sprite.draw(canvas, this.x, this.y);
 };
+
+
+
 
 startGame();
 

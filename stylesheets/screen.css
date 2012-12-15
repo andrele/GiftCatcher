@@ -31,3 +31,19 @@ body
 {
   min-height: 100%;
 }
+
+canvas#playground{
+
+  z-index: 1;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+
+}
+
+canvas#overlay{
+  z-index: 2;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
