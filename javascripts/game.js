@@ -129,7 +129,7 @@ function Enemy(I) {
   {  
     I.sprite = Sprite("present");
   }else{ 
-    I.sprite = Sprite("snowball");
+    I.sprite = Sprite("small_snowball");
   };
 
   I.draw = function() {
@@ -154,7 +154,7 @@ function Enemy(I) {
       if (player.score > game.highscore) {game.highscore = player.score};
     }else{
       Sound.play("crow");
-      player.lives--;
+      player.score--;
     };
 
     this.active = false;
@@ -187,7 +187,7 @@ function startGame(){
 function stopGame(){
   clearInterval(game.interval);
   Sound.play("gameover");
-    $("#overlay").drawRect({
+  $("#overlay").drawRect({
       layer: true,
       name: "dimmer",
       group: "gameover",
@@ -214,7 +214,7 @@ function stopGame(){
       y: (game.canvas_height/2 + 100),
       font: 'normal ' + scoreBoard.fontWeight + ' 50px ' + "'" + scoreBoard.fontFace + "'",
       text: "Click to restart"
-    })
+  });
 };
 
 function resetGame(){
@@ -222,6 +222,7 @@ function resetGame(){
   $("#overlay").removeLayer("dimmer").removeLayer("gameover").clearCanvas();
   player.score = 0;
   player.distance = 0;
+  enemies = [];
   startGame();
 
 
