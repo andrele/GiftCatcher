@@ -5,22 +5,22 @@ var ENEMY_TYPE_PRESENT = 1;
 var ENEMY_TYPE_SNOWBALL = 2;
 
 var game = {
-  canvas_width: window.screen.width,
-  canvas_height: window.screen.height,
+  canvas_width: window.innerWidth,
+  canvas_height: window.innerHeight,
   fps: 30,
   enemy_spawn_rate: 0.5,
   enemy_amplitude_multiplier: 3,
   enemy_vertical_velocity: 10,
   interval: 0,
   highscore: 0,
-  timelimit: 60,
+  timelimit: 45,
   time: 0
 };
 
 var player = {
   color: "#00A",
   x: 50,
-  y: window.screen.height - 500,
+  y: window.innerHeight - 450,
   width: 350,
   height: 400,
   collision_x_offset: 0,
@@ -173,7 +173,7 @@ canvasElement.appendTo('body');
 
 var overlayElement = $("<canvas id='overlay' width='" + game.canvas_width +
   "' height='" + game.canvas_height + "'></canvas>");
-var overlay = canvasElement.get(0).getContext("2d");
+var overlay = overlayElement.get(0).getContext("2d");
 overlayElement.appendTo('body');
 
 function startGame(){
@@ -186,13 +186,44 @@ function startGame(){
 
 function stopGame(){
   clearInterval(game.interval);
-  var text = 'GAME OVER';
-  canvas.font= scoreBoard.fontSize + 'px ' + scoreBoard.fontFace;
-  canvas.fillText(text,game.canvas_width/2,game.canvas_height/2);
   Sound.play("gameover");
+    $("#overlay").drawRect({
+      layer: true,
+      name: "dimmer",
+      group: "gameover",
+      fillStyle: "rgb(0,0,0)",
+      opacity: 0.5,
+      width: game.canvas_width,
+      height: game.canvas_height,
+      fromCenter: false,
+      click: function() {resetGame();}
+    }).drawText({
+      layer: true,
+      name: "gameovertext",
+      group: "gameover",
+      fillStyle: "#FFF",
+      x: (game.canvas_width/2), y: (game.canvas_height/2),
+      font: 'normal ' + scoreBoard.fontWeight + ' 100px ' + "'" + scoreBoard.fontFace + "'",
+      text: "Game Over"
+    }).drawText({
+      layer: true,
+      name: "clicktorestart",
+      group: "gameover",
+      fillStyle: "#FFF",
+      x: (game.canvas_width/2),
+      y: (game.canvas_height/2 + 100),
+      font: 'normal ' + scoreBoard.fontWeight + ' 50px ' + "'" + scoreBoard.fontFace + "'",
+      text: "Click to restart"
+    })
 };
 
 function resetGame(){
+
+  $("#overlay").removeLayer("dimmer").removeLayer("gameover").clearCanvas();
+  player.score = 0;
+  player.distance = 0;
+  startGame();
+
 
 };
 
@@ -264,7 +295,7 @@ player.midpoint = function() {
 
 function draw() {
   //canvas.clearRect(0, 0, game.canvas_width, game.canvas_height);
-  $("canvas").clearCanvas();
+  $("#playground").clearCanvas();
 
   //background.draw();
 
@@ -322,24 +353,16 @@ background.draw = function() {
 }; */
 
 scoreBoard.draw = function() {
-  
     var text = 'HIGHSCORE: ' + game.highscore;
-    overlay.fillStyle = scoreBoard.fillStyle;
-    overlay.font = 'normal ' + scoreBoard.fontWeight + ' ' + scoreBoard.fontSize + 'px ' + "'" + scoreBoard.fontFace + "'";
-    overlay.fillText(text,10,scoreBoard.y);
+    canvas.fillStyle = scoreBoard.fillStyle;
+    canvas.font = 'normal ' + scoreBoard.fontWeight + ' ' + scoreBoard.fontSize + 'px ' + "'" + scoreBoard.fontFace + "'";
+    canvas.fillText(text,30,scoreBoard.y);
     text = 'SCORE: ' + player.score;
-    overlay.fillText(text,10,scoreBoard.y + 50);
-    text = 'DISTANCE: ' + Math.floor((player.distance/300)) + 'ft';
-    overlay.fillText(text,10,scoreBoard.y + 100);
+    canvas.fillText(text,30,scoreBoard.y + 50);
     text = 'TIME LEFT: ' + Math.floor(game.time/game.fps) + ' seconds';
-    overlay.fillText(text,10,scoreBoard.y + 150); 
-
-    $("#overlay").drawText({
-      fillStyle: "#EEEEEE",
-      x: 150, y:100,
-      font: "36pt Verdana, sans-serif",
-      text: ""
-    });
+    canvas.fillText(text,window.innerWidth-450,scoreBoard.y);
+    text = 'DISTANCE: ' + Math.floor((player.distance/300)) + 'ft';
+    canvas.fillText(text, window.innerWidth-450,scoreBoard.y + 50); 
 };
 
 player.sprite = Sprite("player");

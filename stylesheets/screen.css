@@ -24,6 +24,8 @@ html{
 
   min-height: 100%;
 
+  z-index: 0;
+
   background-size: cover;
 }
 
@@ -46,4 +48,19 @@ canvas#overlay{
   position: absolute;
   left: 0px;
   top: 0px;
+}
+
+.container{
+  z-index: 10;
+  width: 70%;
+  margin: 10px auto;
+  position: relative;
+}
+
+#logo{
+  position: absolute;
+  width: 436px;
+  height: 281px;
+  margin: 30px 0 0 -218px;
+  left: 50%;
 }
