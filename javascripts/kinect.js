@@ -34,7 +34,7 @@ var radar = {
         console.log('Position X:' + player.x);
         console.log('Distance: ' + player.distance);
 
-    }
+    };
   }
 };
 

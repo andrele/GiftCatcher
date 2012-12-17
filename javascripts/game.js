@@ -13,8 +13,9 @@ var game = {
   enemy_vertical_velocity: 10,
   interval: 0,
   highscore: 0,
-  timelimit: 3,
-  time: 0
+  timelimit: 45,
+  time: 0,
+  floor_width: 10
 };
 
 var player = {
@@ -96,7 +97,13 @@ function Enemy(I) {
 
   I.active = true;
   I.age = Math.floor(Math.random() * 128);
-  I.type = Math.floor(Math.random() * 2 + 1.5);
+  // I.type = Math.floor(Math.random() * 2 + 1);
+
+  if (Math.random() < .7) {
+    I.type = ENEMY_TYPE_PRESENT;
+  } else {
+    I.type = ENEMY_TYPE_SNOWBALL;
+  }
 
   I.color = "#A2B";
 
@@ -209,10 +216,6 @@ function resetGame(){
 // Game loop updater. Checks for keypresses, handles collisions, and adds enemies to screen
 
 function update() {
-  if(keydown.space) {
-    player.shoot();
-  }
-
   if(keydown.left) {
     player.x -= 15;
   }
