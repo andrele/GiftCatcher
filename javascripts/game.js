@@ -3,6 +3,7 @@
 // Falling object types
 var ENEMY_TYPE_PRESENT = 1;
 var ENEMY_TYPE_SNOWBALL = 2;
+var ENEMY_TYPE_HP = 3;
 
 var game = {
   canvas_width: window.innerWidth,
@@ -99,12 +100,26 @@ function Enemy(I) {
   I.age = Math.floor(Math.random() * 128);
   // I.type = Math.floor(Math.random() * 2 + 1);
 
-  if (Math.random() < .7) {
-    I.type = ENEMY_TYPE_PRESENT;
-  } else {
-    I.type = ENEMY_TYPE_SNOWBALL;
-  }
+  var randomType = Math.random();
 
+  if (randomType < .7) {
+    I.type = ENEMY_TYPE_PRESENT;
+  } else if (randomType >= .7 && randomType <= .9){
+    I.type = ENEMY_TYPE_SNOWBALL;
+  } else {
+    I.type = ENEMY_TYPE_HP;
+  };
+
+  switch (I.type){
+    case ENEMY_TYPE_SNOWBALL:
+      I.sprite = Sprite("small_snowball");
+      break;
+    case ENEMY_TYPE_HP:
+      I.sprite = Sprite("hplogo");
+      break;
+    default:
+      I.sprite = Sprite("present"); 
+  };
   I.color = "#A2B";
 
   I.x = game.canvas_width / 4 + Math.random() * game.canvas_width / 2;
@@ -120,12 +135,7 @@ function Enemy(I) {
       I.y >= 0 && I.y <= game.canvas_height;
   };
 
-  if (I.type === ENEMY_TYPE_PRESENT) 
-  {  
-    I.sprite = Sprite("present");
-  }else{ 
-    I.sprite = Sprite("small_snowball");
-  };
+
 
   I.draw = function() {
     this.sprite.draw(canvas, this.x, this.y);
@@ -178,6 +188,7 @@ function stopGame(){
       name: "dimmer",
       group: "gameover",
       fillStyle: "rgba(0,0,0,0.5)",
+      opacity: 1,
       width: game.canvas_width,
       height: game.canvas_height,
       fromCenter: false,
@@ -187,6 +198,7 @@ function stopGame(){
       name: "gameovertext",
       group: "gameover",
       fillStyle: "#FFF",
+      opacity: 1,
       x: (game.canvas_width/2), y: (game.canvas_height/2),
       font: 'normal ' + scoreBoard.fontWeight + ' 100px ' + "'" + scoreBoard.fontFace + "'",
       text: "Game Over"
@@ -195,6 +207,7 @@ function stopGame(){
       name: "clicktorestart",
       group: "gameover",
       fillStyle: "#FFF",
+      opacity: 1,
       x: (game.canvas_width/2),
       y: (game.canvas_height/2 + 100),
       font: 'normal ' + scoreBoard.fontWeight + ' 50px ' + "'" + scoreBoard.fontFace + "'",
@@ -314,19 +327,61 @@ function handleCollisions() {
   // Check to see if any enemies hit player
   enemies.forEach(function(enemy) {
     if(collides(enemy, player)) {
-      if (enemy.type === ENEMY_TYPE_PRESENT) {
-        Sound.play("whip");
-        player.score++;
-        if (player.score > game.highscore) {game.highscore = player.score};
-      }else{
-        Sound.play("crow");
-        player.score--;
-      };
+
+      switch (enemy.type){
+        case ENEMY_TYPE_SNOWBALL:
+          Sound.play("crow");
+          player.changeScore(-1);
+          break;
+        case ENEMY_TYPE_HP:
+          Sound.play("powerup");
+          player.changeScore(10);
+          break;
+        default:
+          Sound.play("whip");
+          player.changeScore(1);
+      }
       enemy.explode();
       player.explode();
 
     }
   });
+};
+
+player.changeScore = function(change) {
+  var scoreChange = change;
+  var score_x_offset = 250;
+  var score_y_offset = 100;
+  this.score += scoreChange;
+
+  if (scoreChange > 0){
+    var text = '+' + scoreChange;
+    if (this.score > game.highscore) {game.highscore = this.score; text = '+' + scoreChange + ' New Record!'};
+    $("#overlay").drawText({
+      layer: true,
+      group: "scoreIndicator",
+      fillStyle: "#007300",
+      x: player.x + score_x_offset, y: player.y + score_y_offset,
+      font: 'normal ' + scoreBoard.fontWeight + ' 100px ' + "'" + scoreBoard.fontFace + "'",
+      text: text
+    }).animateLayer({
+      scale: "+=1",
+      fillStyle: "rgba(0,0,0,0)"
+    }, 400, "swing", function() {$("#overlay").removeLayerGroup("scoreIndicator");});
+
+  }else{
+    $("#overlay").drawText({
+      layer: true,
+      group: "scoreIndicator",
+      fillStyle: "#b80010",
+      x: player.x + score_x_offset, y: player.y + score_y_offset,
+      font: 'normal ' + scoreBoard.fontWeight + ' 100px ' + "'" + scoreBoard.fontFace + "'",
+      text: scoreChange
+    }).animateLayer({
+      scale: "+=1",
+      fillStyle: "rgba(0,0,0,0)",
+    }, 400, "swing", function() {$("#overlay").removeLayerGroup("scoreIndicator");});
+  }
 };
 
 player.explode = function() {
