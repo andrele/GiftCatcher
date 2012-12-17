@@ -13,7 +13,7 @@ var game = {
   enemy_vertical_velocity: 10,
   interval: 0,
   highscore: 0,
-  timelimit: 45,
+  timelimit: 3,
   time: 0
 };
 
@@ -35,19 +35,7 @@ var player = {
 };
 
 var playerBullets = [];
-/*
-var background = {
-  color: "#00A",
-  x: 0,
-  y: 0,
-  width: window.screen.width,
-  height: window.screen.height,
-  draw: function() {
-    canvas.fillStyle = this.color;
-    canvas.fillRect(this.x, this.y, this.width, this.height);
-  }
-};
-*/
+
 var scoreBoard = {
   fontSize: 48,
   fontFace: "Mountains of Christmas",
@@ -108,14 +96,14 @@ function Enemy(I) {
 
   I.active = true;
   I.age = Math.floor(Math.random() * 128);
-  I.type = Math.floor(Math.random() * 2 + 1);
+  I.type = Math.floor(Math.random() * 2 + 1.5);
 
   I.color = "#A2B";
 
   I.x = game.canvas_width / 4 + Math.random() * game.canvas_width / 2;
   I.y = 0;
   I.xVelocity = 0
-  I.yVelocity = Math.random()*game.enemy_vertical_velocity +2;
+  I.yVelocity = Math.random()*game.enemy_vertical_velocity + 2;
 
   I.width = 82;
   I.height = 82;
@@ -148,15 +136,6 @@ function Enemy(I) {
   };
 
   I.explode = function() {
-    if (this.type === ENEMY_TYPE_PRESENT) {
-      Sound.play("whip");
-      player.score++;
-      if (player.score > game.highscore) {game.highscore = player.score};
-    }else{
-      Sound.play("crow");
-      player.score--;
-    };
-
     this.active = false;
     // Extra Credit: Add an explosion graphic
   };
@@ -191,8 +170,7 @@ function stopGame(){
       layer: true,
       name: "dimmer",
       group: "gameover",
-      fillStyle: "rgb(0,0,0)",
-      opacity: 0.5,
+      fillStyle: "rgba(0,0,0,0.5)",
       width: game.canvas_width,
       height: game.canvas_height,
       fromCenter: false,
@@ -219,7 +197,7 @@ function stopGame(){
 
 function resetGame(){
 
-  $("#overlay").removeLayer("dimmer").removeLayer("gameover").clearCanvas();
+  $("#overlay").removeLayerGroup("gameover").clearCanvas();
   player.score = 0;
   player.distance = 0;
   enemies = [];
@@ -298,8 +276,6 @@ function draw() {
   //canvas.clearRect(0, 0, game.canvas_width, game.canvas_height);
   $("#playground").clearCanvas();
 
-  //background.draw();
-
   scoreBoard.draw();
 
   player.draw();
@@ -335,8 +311,17 @@ function handleCollisions() {
   // Check to see if any enemies hit player
   enemies.forEach(function(enemy) {
     if(collides(enemy, player)) {
+      if (enemy.type === ENEMY_TYPE_PRESENT) {
+        Sound.play("whip");
+        player.score++;
+        if (player.score > game.highscore) {game.highscore = player.score};
+      }else{
+        Sound.play("crow");
+        player.score--;
+      };
       enemy.explode();
       player.explode();
+
     }
   });
 };
@@ -345,13 +330,6 @@ player.explode = function() {
   this.active = false;
   // Extra Credit: Add an explosion graphic and then end the game
 };
-/*
-background.sprite = Sprite("background");
-
-background.draw = function() {
-  this.sprite.draw(canvas, 0, 0);
-
-}; */
 
 scoreBoard.draw = function() {
     var text = 'HIGHSCORE: ' + game.highscore;
@@ -371,9 +349,6 @@ player.sprite = Sprite("player");
 player.draw = function() {
   this.sprite.draw(canvas, this.x, this.y);
 };
-
-
-
 
 startGame();
 

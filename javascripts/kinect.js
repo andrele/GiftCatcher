@@ -9,13 +9,8 @@ var radardiv = document.getElementById('radar');
 
 var radar = {
   onuserfound: function (user) {
-    var userdiv = document.createElement('div');
-    userdiv.className = 'user';
-    user.radarelement = userdiv; // add radarelement as a property of the user
-    //radardiv.appendChild(user.radarelement);
   },
   onuserlost: function (user) {
-    //radardiv.removeChild(user.radarelement);
   },
   ondataupdate: function (zigdata) {
     for (var userid in zigdata.users) {
@@ -34,11 +29,9 @@ var radar = {
         var newPosition = ((pos[0]*(pixelwidth/2)/800) + 600);
         player.distance += Math.floor(Math.abs((newPosition-player.x)));
         player.x = newPosition;
-        player.y = ((window.innerHeight/2) - (pos[1]).clamp(0, 200)*1.5);
-        el.style.left = player.x + "px";
+        // Add jumping, but limit it to 250px high
+        player.y = ((window.innerHeight/2) - (pos[1]).clamp(0, 250)*1.5);
         console.log('Position X:' + player.x);
-        console.log('pos[1]: ' + (pos[1] >= 0)); 
-        console.log('pos[0]: ' + pos[0]);
         console.log('Distance: ' + player.distance);
 
     }
