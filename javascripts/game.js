@@ -125,7 +125,7 @@ function Enemy(I) {
   I.x = game.canvas_width / 4 + Math.random() * game.canvas_width / 2;
   I.y = 0;
   I.xVelocity = 0
-  I.yVelocity = Math.random()*game.enemy_vertical_velocity + 2;
+  I.yVelocity = Math.random()*game.enemy_vertical_velocity + 5;
 
   I.width = 82;
   I.height = 82;
@@ -182,7 +182,7 @@ function startGame(){
 
 function stopGame(){
   clearInterval(game.interval);
-  Sound.play("gameover");
+  Sound.play("applause");
   $("#overlay").drawRect({
       layer: true,
       name: "dimmer",
@@ -201,7 +201,7 @@ function stopGame(){
       opacity: 1,
       x: (game.canvas_width/2), y: (game.canvas_height/2),
       font: 'normal ' + scoreBoard.fontWeight + ' 100px ' + "'" + scoreBoard.fontFace + "'",
-      text: "Game Over"
+      text: "Great job!"
     }).drawText({
       layer: true,
       name: "clicktorestart",
@@ -403,9 +403,11 @@ scoreBoard.draw = function() {
 };
 
 player.sprite = Sprite("player");
+player.shadow = Sprite("player_shadow");
 
 player.draw = function() {
   this.sprite.draw(canvas, this.x, this.y);
+  this.shadow.draw(canvas, this.x + 65, game.canvas_height - 70);
 };
 
 startGame();
