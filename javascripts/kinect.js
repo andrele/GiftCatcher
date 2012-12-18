@@ -1,5 +1,3 @@
-var radardiv = document.getElementById('radar');
-
 // The radar object will respond to events from the
 // zig object and move the dots around accordingly.
 // It is also responsible for creating and destroying
@@ -7,14 +5,14 @@ var radardiv = document.getElementById('radar');
 // Functions onnewuser(), onlostser(), and ondataupdate()
 // are called by the zig object when those things happen.
 
+
 var radar = {
   onuserfound: function (user) {
   },
   onuserlost: function (user) {
   },
   ondataupdate: function (zigdata) {
-    for (var userid in zigdata.users) {
-      var user = zigdata.users[userid];
+      var user = zigdata.users[1];
       var pos = user.position;
       var el = user.radarelement;
       var parentElenment = document.body;
@@ -33,8 +31,6 @@ var radar = {
         player.y = ((window.innerHeight/2) - (pos[1]).clamp(0, 250)*1.5);
         console.log('Position X:' + player.x);
         console.log('Distance: ' + player.distance);
-
-    };
   }
 };
 
@@ -42,4 +38,3 @@ var radar = {
 // the zig object will call the radar object's callback functions
 
 zig.addListener(radar);
-
