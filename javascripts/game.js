@@ -32,6 +32,8 @@ var player = {
   lives: 3,
   distance: 0,
   prev_height: 0,
+  prev_depth: 0,
+  floor_offset: 0,
   draw: function() {
     canvas.fillStyle = this.color;
     canvas.fillRect(this.x, this.y, this.width, this.height);
