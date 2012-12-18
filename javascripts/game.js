@@ -16,13 +16,14 @@ var game = {
   highscore: 0,
   timelimit: 45,
   time: 0,
-  floor_width: 10
+  floor: window.innerHeight - 450,
+  area_width: 10
 };
 
 var player = {
   color: "#00A",
   x: 50,
-  y: window.innerHeight - 450,
+  y: game.floor,
   width: 350,
   height: 400,
   collision_x_offset: 0,
@@ -30,6 +31,7 @@ var player = {
   score: 0,
   lives: 3,
   distance: 0,
+  prev_height: 0,
   draw: function() {
     canvas.fillStyle = this.color;
     canvas.fillRect(this.x, this.y, this.width, this.height);
@@ -407,7 +409,7 @@ player.shadow = Sprite("player_shadow");
 
 player.draw = function() {
   this.sprite.draw(canvas, this.x, this.y);
-  this.shadow.draw(canvas, this.x + 65, game.canvas_height - 70);
+  this.shadow.draw(canvas, this.x + 65, game.floor + 380);
 };
 
 startGame();

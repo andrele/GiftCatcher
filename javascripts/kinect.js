@@ -12,7 +12,8 @@ var radar = {
   onuserlost: function (user) {
   },
   ondataupdate: function (zigdata) {
-      var user = zigdata.users[1];
+      if (zigdata.users[2]){
+      var user = zigdata.users[2];
       var pos = user.position;
       var el = user.radarelement;
       var parentElenment = document.body;
@@ -22,15 +23,17 @@ var radar = {
       var pixelheight = parentElenment.offsetHeight;
       var heightscale = pixelheight / zrange;
       var widthscale = pixelwidth / xrange;
+      var jump = Math.floor(player.prev_height - pos[1]);
 
         // player.x = ((((pos[0] / xrange) + 0.5) * pixelwidth - (el.offsetWidth / 2)) - 200);
         var newPosition = ((pos[0]*(pixelwidth/2)/800) + 600);
-        player.distance += Math.floor(Math.abs((newPosition-player.x)));
+        player.distance += Math.floor(Math.abs(newPosition-player.x));
         player.x = newPosition;
-        // Add jumping, but limit it to 250px high
-        player.y = ((window.innerHeight/2) - (pos[1]).clamp(0, 250)*1.5);
-        console.log('Position X:' + player.x);
+        player.y = ((game.floor) - (pos[1]).clamp(0, 250)*1.5);
+        console.log('Jump:' + jump);
+        console.log('pos[1]: '  + pos[1]);
         console.log('Distance: ' + player.distance);
+      };
   }
 };
 
@@ -38,3 +41,4 @@ var radar = {
 // the zig object will call the radar object's callback functions
 
 zig.addListener(radar);
+
