@@ -10,6 +10,9 @@ var engager = zig.EngageUsersWithSkeleton(1);
 
 engager.addEventListener('userengaged', function (user) {
   console.log('User engaged: ' + user.id);
+  if (game.waiting){
+    game.countdown();
+  };
 
   user.addEventListener('userupdate', function(user) {
     var pos = user.position;
@@ -35,9 +38,6 @@ engager.addEventListener('userengaged', function (user) {
     player.distance += Math.floor(Math.abs(newPosition-player.x));
     player.x = newPosition;
     player.y = ((game.floor) - (pos[1]-player.floor_offset-50).clamp(0, 250)*1.5);
-    console.log('pos[1]: ' + pos[1]);
-    console.log('pos[2]: ' + pos[2]);
-    console.log('Player Y: ' + player.y);
   })
 });
 
