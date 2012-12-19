@@ -23,14 +23,14 @@ var game = {
   area_width: 10,
   waiting: false,
   start: function (){
-    game.waiting = false;
     game.interval = setInterval(function() {
       game.update();
       game.draw();
     }, 1000/game.fps);
   },
   reset: function(){
-    $("#overlay").removeLayerGroup("gameover").clearCanvas();
+    $("#overlay").removeLayer("scroll").removeLayerGroup("gameover").clearCanvas();
+    game.waiting = false;
     player.score = 0;
     player.distance = 0;
     enemies = [];
@@ -39,7 +39,7 @@ var game = {
   },
   ready: function(){
     game.waiting = true;
-    $("#overlay").drawRect({
+    $("#overlay").removeLayer("scroll").clearCanvas().drawRect({
       layer: true,
       name: "dimmer",
       group: "waiting",
@@ -72,10 +72,11 @@ var game = {
         width: game.canvas_width,
         height: game.canvas_height,
         fromCenter: false,
-        click: function() {$("#overlay").removeLayer("scroll"); game.reset();}
+        click: function() {game.reset();}
       }).drawImage({
         layer: true,
         name: "scroll",
+        group: "gameover",
         source: "images/scroll_big.png",
         x: (game.canvas_width/2),
         y: (game.canvas_height/2+90)
@@ -99,7 +100,7 @@ var game = {
         x: (game.canvas_width/2),
         y: (game.canvas_height/2 + 140),
         font: 'normal ' + scoreBoard.fontWeight + ' 50px ' + "'" + scoreBoard.fontFace + "'",
-        text: ('YOUR SCORE: ' + player.score + '\nHIGHSCORE: ' + game.highscore + '\n' + (player.score === game.highscore ? 'NEW HIGHSCORE!' : '\n\n') + '\n DISTANCE TRAVELLED: ' + Math.floor(player.distance/300) + 'ft')
+        text: ('YOUR SCORE: ' + player.score + '\nHIGHSCORE: ' + game.highscore + '\n' + (player.score === game.highscore ? 'NEW HIGHSCORE!' : '') + '\n DISTANCE TRAVELLED: ' + Math.floor(player.distance/300) + 'ft')
 
       }).drawText({
         layer: true,
@@ -115,6 +116,7 @@ var game = {
   },
   countdown: function (){
     $("#overlay").removeLayerGroup("waiting").clearCanvas();
+    game.waiting = false;
     game.draw();
 
     $("#overlay").drawText({
