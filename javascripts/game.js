@@ -100,6 +100,7 @@ var game = {
         y: (game.canvas_height/2 + 140),
         font: 'normal ' + scoreBoard.fontWeight + ' 50px ' + "'" + scoreBoard.fontFace + "'",
         text: ('YOUR SCORE: ' + player.score + '\nHIGHSCORE: ' + game.highscore + '\n' + (player.score === game.highscore ? 'NEW HIGHSCORE!' : '\n\n') + '\n DISTANCE TRAVELLED: ' + Math.floor(player.distance/300) + 'ft')
+
       }).drawText({
         layer: true,
         name: "clicktorestart",
