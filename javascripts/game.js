@@ -17,7 +17,7 @@ var game = {
   enemy_vertical_velocity: 10,
   interval: 0,
   highscore: 0,
-  timelimit: 45,
+  timelimit: 15,
   time: 0,
   floor: window.innerHeight - 450,
   area_width: 10,
@@ -72,16 +72,34 @@ var game = {
         width: game.canvas_width,
         height: game.canvas_height,
         fromCenter: false,
-        click: function() {game.reset();}
-      }).drawText({
+        click: function() {$("#overlay").removeLayer("scroll"); game.reset();}
+      }).drawImage({
+        layer: true,
+        name: "scroll",
+        source: "images/scroll_big.png",
+        x: (game.canvas_width/2),
+        y: (game.canvas_height/2+90)
+      });
+    $("#overlay").drawText({
         layer: true,
         name: "gameovertext",
         group: "gameover",
-        fillStyle: "#FFF",
+        fillStyle: "#a40303",
         opacity: 1,
-        x: (game.canvas_width/2), y: (game.canvas_height/2),
+        x: (game.canvas_width/2), y: (game.canvas_height/2-60),
         font: 'normal ' + scoreBoard.fontWeight + ' 100px ' + "'" + scoreBoard.fontFace + "'",
         text: "Great job!"
+      }).drawText({
+        layer: true,
+        name: "score",
+        group: "gameover",
+        fillStyle: "#a40303",
+        opacity: 1,
+        lineHeight: 5,
+        x: (game.canvas_width/2),
+        y: (game.canvas_height/2 + 140),
+        font: 'normal ' + scoreBoard.fontWeight + ' 50px ' + "'" + scoreBoard.fontFace + "'",
+        text: ('YOUR SCORE: ' + player.score + '\nHIGHSCORE: ' + game.highscore + '\n' + (player.score === game.highscore ? 'NEW HIGHSCORE!' : '\n\n') + '\n DISTANCE TRAVELLED: ' + Math.floor(player.distance/300) + 'ft')
       }).drawText({
         layer: true,
         name: "clicktorestart",
@@ -89,13 +107,14 @@ var game = {
         fillStyle: "#FFF",
         opacity: 1,
         x: (game.canvas_width/2),
-        y: (game.canvas_height/2 + 100),
+        y: (game.canvas_height/2 + 400),
         font: 'normal ' + scoreBoard.fontWeight + ' 50px ' + "'" + scoreBoard.fontFace + "'",
         text: "Click to restart"
     });
   },
   countdown: function (){
     $("#overlay").removeLayerGroup("waiting").clearCanvas();
+    game.draw();
 
     $("#overlay").drawText({
       layer: true,
