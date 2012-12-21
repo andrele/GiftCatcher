@@ -12,15 +12,16 @@ var game = {
   canvas_width: window.innerWidth,
   canvas_height: window.innerHeight,
   fps: 30,
-  enemy_spawn_rate: 0.5,
+  enemy_spawn_rate: .75,
   enemy_amplitude_multiplier: 3,
   enemy_vertical_velocity: 10,
   interval: 0,
   highscore: 0,
-  timelimit: 45,
+  timelimit: 60,
   time: 0,
   floor: window.innerHeight - 450,
   area_width: 10,
+  hard_mode: false,
   waiting: false,
   start: function (){
     game.interval = setInterval(function() {
@@ -165,6 +166,15 @@ var game = {
 
     if(keydown.right) {
       player.x += 15;
+    }
+
+    if(keydown.l) {
+      game.enemy_spawn_rate += 1;
+    }
+
+
+    if(keydown.k) {
+      game.enemy_spawn_rate -= 1;
     }
 
     if(keydown.r) {
