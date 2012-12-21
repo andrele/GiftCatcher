@@ -17,7 +17,7 @@ var game = {
   enemy_vertical_velocity: 10,
   interval: 0,
   highscore: 0,
-  timelimit: 15,
+  timelimit: 45,
   time: 0,
   floor: window.innerHeight - 450,
   area_width: 10,
@@ -55,12 +55,19 @@ var game = {
       group: "waiting",
       fillStyle: "#FFF",
       opacity: 1,
-      x: (game.canvas_width/2), y: (game.canvas_height/2),
+      x: (game.canvas_width/2), y: (game.canvas_height/2+225),
       font: 'normal ' + scoreBoard.fontWeight + ' 100px ' + "'" + scoreBoard.fontFace + "'",
-      text: "Waiting for a new player"
+      text: "Scanning for a new player"
+    }).drawImage({
+      layer: true,
+      name: "pose",
+      group: "waiting",
+      source: "images/kinect_pose.png",
+      x: (game.canvas_width/2),
+      y: (game.canvas_height/2)
     });
   },
-  stop: function (){
+  stop: function() {
     clearInterval(game.interval);
     Sound.play("applause");
     $("#overlay").drawRect({
@@ -79,8 +86,11 @@ var game = {
         group: "gameover",
         source: "images/scroll_big.png",
         x: (game.canvas_width/2),
-        y: (game.canvas_height/2+90)
+        y: (game.canvas_height/2+90),
+        load: game.drawScore
       });
+  },
+  drawScore: function() {
     $("#overlay").drawText({
         layer: true,
         name: "gameovertext",
@@ -101,7 +111,6 @@ var game = {
         y: (game.canvas_height/2 + 140),
         font: 'normal ' + scoreBoard.fontWeight + ' 50px ' + "'" + scoreBoard.fontFace + "'",
         text: ('YOUR SCORE: ' + player.score + '\nHIGHSCORE: ' + game.highscore + '\n' + (player.score === game.highscore ? 'NEW HIGHSCORE!' : '') + '\n DISTANCE TRAVELLED: ' + Math.floor(player.distance/300) + 'ft')
-
       }).drawText({
         layer: true,
         name: "clicktorestart",
@@ -114,7 +123,7 @@ var game = {
         text: "Click to restart"
     });
   },
-  countdown: function (){
+  countdown: function() {
     $("#overlay").removeLayerGroup("waiting").clearCanvas();
     game.waiting = false;
     game.draw();
@@ -160,6 +169,16 @@ var game = {
 
     if(keydown.r) {
       game.stop();
+    }
+
+    if(keydown.c) {
+      if (player.alternate_character === true){
+        player.alternate_character = false;
+        player.sprite = Sprite("player");
+      } else {
+        player.alternate_character = true;
+        player.sprite = Sprite("player_girl");
+      };
     }
 
     game.time--;
@@ -238,12 +257,9 @@ var player = {
   prev_height: 0,
   prev_depth: 0,
   floor_offset: 0,
+  alternate_character: false,
   sprite: Sprite("player"),
   shadow: Sprite("player_shadow"),
-  draw: function() {
-    canvas.fillStyle = this.color;
-    canvas.fillRect(this.x, this.y, this.width, this.height);
-  },
   midpoint: function() {
     return {
       x: this.x + this.width/2,
